@@ -1,35 +1,35 @@
-import json
 import struct
 import sys
 import numpy
 import io
 import zlib
 import pickle
-import binascii
 
 
 def encoder():
     fileToRead = sys.argv[1]
     fileToWrite = sys.argv[2]
     lenghtOfWord = sys.argv[3]
+
     file1 = numpy.fromfile(fileToRead, dtype = "uint8")
     file = numpy.unpackbits(file1)
-    #print(file1)
     file2 = open(fileToWrite, 'wb')
     number = int(lenghtOfWord)
-    List = []
-    #print(int(1).to_bytes(8, byteorder="big"))
+    total = len(file)
+
     List = getList(file, number)
 
     frequency = calculateFrequency(List)
-    sortedFrequency = sorted(frequency.items(), key=lambda item: item[1],reverse=True)
-    total = len(file)
+
+    sortedFrequency = sorted(frequency.items(), key=lambda item: item[1], reverse=True)
+
     lenght = lenghtOfBinarySymbols(sortedFrequency, total)
     binary = binaryAlphabet(lenght, sortedFrequency, total)
-    file2 = writeToFile(List,binary,file2, number)
 
+    file2 = writeToFile(List, binary, file2, number)
     file2.close()
-    
+
+
 def calculateFrequency(file):
     frequency = {}
     for character in file:
@@ -37,6 +37,7 @@ def calculateFrequency(file):
             frequency[character] = 0
         frequency[character] += 1
     return frequency
+
 
 def lenghtOfBinarySymbols(data, total):
     lenght = []
@@ -49,6 +50,7 @@ def lenghtOfBinarySymbols(data, total):
             count += 1
         lenght.append(count)
     return lenght
+
 
 def binaryAlphabet(lenght, data, total):
     alphabet = {}
@@ -70,6 +72,7 @@ def binaryAlphabet(lenght, data, total):
         
     return alphabet
 
+
 def decimalToBinary(number, lenght):
     binary = ''
     for i in range(lenght):
@@ -81,17 +84,20 @@ def decimalToBinary(number, lenght):
             binary += '0'
     return binary
 
+
 def reverseValues(dictionary):
     new_dict = {}
     for k, v in dictionary.items():
         new_dict[v] = k
     return new_dict
 
+
 def dict2File(data):
     bytes = io.BytesIO()
     pickle.dump(data, bytes)
     zbytes = zlib.compress(bytes.getbuffer())
     return zbytes
+
 
 def writeToFile(file, dictionary, file2, number):
     reverseBinary = reverseValues(dictionary)
@@ -105,7 +111,6 @@ def writeToFile(file, dictionary, file2, number):
     file2.write(line.encode('utf-8'))
 
     for i in file:
-        print(i)
         for key in dictionary:
             if i == key:
                 b += (dictionary[key])
@@ -116,6 +121,7 @@ def writeToFile(file, dictionary, file2, number):
         j = j + 7
 
     return file2
+
 
 def getList(data, number):
     a = ''

@@ -1,9 +1,8 @@
-import binascii
-import json
 import sys
 import numpy
 import zlib
 import pickle
+
 
 def main():
     fileToWrite = sys.argv[2]
@@ -18,12 +17,13 @@ def main():
 
     text = getText(head, data)
 
-    letter = getDecodedText(text,mydict)
+    letter = getDecodedText(text, mydict)
 
-    file = writeToFile(file,letter)
+    file = writeToFile(file, letter)
     fileRead.close()
     file.flush()
     file.close();
+
 
 def getDictionary(file):
     mydict = None
@@ -35,7 +35,7 @@ def getDictionary(file):
         search = search.decode('latin1')
 
         if search == '\n\n':
-            mydict = file[dictInterval:head]
+            mydict = file[dictInterval:ahead]
             mydict = dict2File(mydict)
             print(mydict)
             break
@@ -44,9 +44,10 @@ def getDictionary(file):
         ahead = ahead + 1
     return mydict, head, ahead
 
-def getText(head,file):
+
+def getText(head, file):
     binaryText = file[head:(len(file))]
-    text =''
+    text = ''
 
     for char in binaryText:
         text += bin(ord(chr(char)))[2:].zfill(7)
@@ -54,7 +55,8 @@ def getText(head,file):
 
     return text
 
-def getDecodedText(text,mydict):
+
+def getDecodedText(text, mydict):
     letter = ""
     searchb = 0
     searchIterator = 0
@@ -71,9 +73,11 @@ def getDecodedText(text,mydict):
 
     return letter
 
+
 def dict2File(file):
     bytes = zlib.decompress(file)
     return pickle.loads(bytes)
+
 
 def writeToFile(file,letter):
     array = []
@@ -89,5 +93,6 @@ def writeToFile(file,letter):
         file.write(byte)
         array.clear()
     return file
+
 
 main()
