@@ -17,6 +17,10 @@ def encoder():
     number = int(lenghtOfWord)
     total = len(file)/(number-1)
 
+    if number > len(file):
+        print("Entered number is too big\n")
+        exit()
+
     List = getList(file, number)
 
     frequency = calculateFrequency(List)
