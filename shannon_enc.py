@@ -17,6 +17,10 @@ def encoder():
     number = int(lenghtOfWord)
     total = len(file)/(number-1)
 
+    if number > len(file):
+        print("Entered number is too big\n")
+        exit()
+
     List = getList(file, number)
 
     frequency = calculateFrequency(List)
@@ -42,11 +46,9 @@ def calculateFrequency(file):
 def lenghtOfBinarySymbols(data, total):
     lenght = []
     size = len(data)
-    something = 0
     for i in range(size):
         count = 0
         probability = data[i][1]
-        something+=probability
         while probability <= total:
             probability = probability*2
             count += 1
@@ -59,7 +61,6 @@ def binaryAlphabet(lenght, data, total):
     size = len(data)
     for i in range(size):
         probability = data[i][1]
-
         symbol = data[i][0]
         binary = ''
         if i == 0:
