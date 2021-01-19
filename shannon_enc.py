@@ -1,6 +1,11 @@
 import json
-import sys; print(sys.executable)
+import struct
+import sys
 import numpy
+import io
+import zlib
+import pickle
+import binascii
 
 
 def encoder():
@@ -9,14 +14,16 @@ def encoder():
     lenghtOfWord = sys.argv[3]
     file1 = numpy.fromfile(fileToRead, dtype = "uint8")
     file = numpy.unpackbits(file1)
-    print(file1)
+    #print(file1)
     file2 = open(fileToWrite, 'wb')
     number = int(lenghtOfWord)
     List = []
+    #print(int(1).to_bytes(8, byteorder="big"))
     List = getList(file, number)
+
     frequency = calculateFrequency(List)
     sortedFrequency = sorted(frequency.items(), key=lambda item: item[1],reverse=True)
-    total = len(file1)
+    total = len(file)
     lenght = lenghtOfBinarySymbols(sortedFrequency, total)
     binary = binaryAlphabet(lenght, sortedFrequency, total)
     file2 = writeToFile(List,binary,file2, number)
@@ -37,7 +44,7 @@ def lenghtOfBinarySymbols(data, total):
     for i in range(size):
         count = 0
         probability = data[i][1]
-        while probability < total:
+        while probability <= total:
             probability = probability*2
             count += 1
         lenght.append(count)
@@ -80,19 +87,33 @@ def reverseValues(dictionary):
         new_dict[v] = k
     return new_dict
 
-def writeToFile(file, dictionary,file2, number):
+def dict2File(data):
+    bytes = io.BytesIO()
+    pickle.dump(data, bytes)
+    zbytes = zlib.compress(bytes.getbuffer())
+    return zbytes
+
+def writeToFile(file, dictionary, file2, number):
     reverseBinary = reverseValues(dictionary)
     print(reverseBinary)
-    s = json.dumps(reverseBinary)
-    file2.write(bytes(s.encode()))
+    #s = json.dumps(reverseBinary)
+    zbytes = dict2File(reverseBinary)
+    file2.write(zbytes)
+    #file2.write(bytes(s.encode()))
     line = '\n\n'
+    b=''
     file2.write(line.encode('utf-8'))
+
     for i in file:
+        print(i)
         for key in dictionary:
             if i == key:
-                # bytes = numpy.packbits((dictionary[key]).encode())
-                # bytes.tofile(file2)
-                file2.write(bytes((dictionary[key]).encode()))
+                b += (dictionary[key])
+    j = 0
+    print(b)
+    while j<(len(b)):
+        file2.write(struct.pack('B', int(b[j:j + 7],2)))
+        j = j + 7
 
     return file2
 
@@ -103,14 +124,13 @@ def getList(data, number):
     for i in data:
         x += 1
         a += str(i)
-        if(x>len(data)-(len(data)%number)):
+        if(x>len(data)-(len(data)%number) and x==len(data)):
             lis.append(a)
             a=''
         if(x%number==0):
             lis.append(a)
             a=''
-        
-            
+    print(lis)
     return lis
             
 
