@@ -37,21 +37,20 @@ def getDictionary(file):
         if search == '\n\n':
             mydict = file[dictInterval:ahead]
             mydict = dict2File(mydict)
-            print(mydict)
             break
 
         head = head + 1
         ahead = ahead + 1
+    print("Dictionary is received\n")
     return mydict, head, ahead
 
 
 def getText(head, file):
+    print("Decoding text...\n")
     binaryText = file[head:(len(file))]
     text = ''
-
     for char in binaryText:
         text += bin(ord(chr(char)))[2:].zfill(7)
-    print(text)
 
     return text
 
@@ -65,12 +64,11 @@ def getDecodedText(text, mydict):
         stringBuffer = searchBuffer
 
         if stringBuffer in mydict:
-            print(mydict[stringBuffer])
             letter += str(mydict[stringBuffer])
             searchIterator = searchb;
 
         searchb = searchb + 1
-
+    print("Text has been decoded\n")
     return letter
 
 
@@ -79,19 +77,19 @@ def dict2File(file):
     return pickle.loads(bytes)
 
 
-def writeToFile(file,letter):
+def writeToFile(file, letter):
+    print("Writing decoded text to file...\n")
     array = []
     a = 0
     while a in range(len(letter)):
         while len(array) < 8 and a < len(letter):
             array.append(int(letter[a]))
             a = a+1
-        print(array)
         char = bytearray(numpy.packbits(array)).decode('latin1')
-        print(char)
         byte = bytes(char, 'latin1')
         file.write(byte)
         array.clear()
+    print("Writing to file is done\n")
     return file
 
 

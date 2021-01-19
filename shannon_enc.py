@@ -15,7 +15,7 @@ def encoder():
     file = numpy.unpackbits(file1)
     file2 = open(fileToWrite, 'wb')
     number = int(lenghtOfWord)
-    total = len(file)
+    total = len(file)/(number-1)
 
     List = getList(file, number)
 
@@ -28,13 +28,13 @@ def encoder():
 
     file2 = writeToFile(List, binary, file2, number)
     file2.close()
-
+    print("Encoding is done")
 
 def calculateFrequency(file):
     frequency = {}
     for character in file:
         if not character in frequency:
-            frequency[character] = 0
+            frequency[character] = 1
         frequency[character] += 1
     return frequency
 
@@ -42,9 +42,11 @@ def calculateFrequency(file):
 def lenghtOfBinarySymbols(data, total):
     lenght = []
     size = len(data)
+    something = 0
     for i in range(size):
         count = 0
         probability = data[i][1]
+        something+=probability
         while probability <= total:
             probability = probability*2
             count += 1
@@ -63,11 +65,11 @@ def binaryAlphabet(lenght, data, total):
         if i == 0:
             binary = decimalToBinary(0, lenght[i])
             alphabet[symbol] = binary
-            number = data[i][1]
+            number = probability
         else:
             decimalNumber = number/total
             binary = decimalToBinary(decimalNumber, lenght[i])
-            number = number + data[i][1]
+            number = number + probability
         alphabet[symbol] = binary
         
     return alphabet
@@ -115,8 +117,7 @@ def writeToFile(file, dictionary, file2, number):
             if i == key:
                 b += (dictionary[key])
     j = 0
-    print(b)
-    while j<(len(b)):
+    while j < (len(b)):
         file2.write(struct.pack('B', int(b[j:j + 7],2)))
         j = j + 7
 
@@ -136,7 +137,6 @@ def getList(data, number):
         if(x%number==0):
             lis.append(a)
             a=''
-    print(lis)
     return lis
             
 
